@@ -17,6 +17,9 @@ Requirements
 To get at working on launchd systems, see [2]. For more blabbering about Crème
 Rappel, see [1].
 
+1. http://hans.fugal.net/blog/articles/2008/02/15/cr%C3%A8me-rappel
+2. http://hans.fugal.net/blog/articles/2008/02/13/atd-on-a-mac
+
 Author
 ------
 Hans Fugal <hans@fugal.net>
@@ -38,7 +41,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-
-1. 
-2. http://hans.fugal.net/blog/articles/2008/02/13/atd-on-a-mac

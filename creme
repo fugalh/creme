@@ -4,11 +4,16 @@
 # GPL2
 
 ## Customization
-ICON='-a iCal.app'      # See growlnotify(1)
 SPEAK=true
 GROWL=true
 GROWLNOTIFY=`which growlnotify`
-NAME='Crème Rappel'
+GROWL_ICON='-a iCal.app'      # See growlnotify(1) and watch the quoting
+GROWL_NAME='Crème Rappel'
+SHOW_TIME=false  # show the time specification in the growl notification
+#SAY_VOICE='Zarvox'
+##
+
+DEBUG=false
 
 usage() {
     cat <<EOF
@@ -23,13 +28,25 @@ EOF
 
 growl_at() {
     MSG=`cat`
-    cat <<EOF | at "$1"
-        $SPEAK && say "$MSG" &
+    TIME=$1
+    $SHOW_TIME && APPEND=" ($TIME)"
+    [ -z "$SAY_VOICE" ] || VOICE="-v \"$SAY_VOICE\""
+    COMMANDS="
+        $SPEAK && say $VOICE \"$MSG\" &
         # the -w is necessary because of a bug in growl or growlnotify on
         # Leopard
-        $GROWL && $GROWLNOTIFY-w -s -n $NAME $ICON -m "$MSG" &
-EOF
+        $GROWL && \
+          $GROWLNOTIFY -w -s -n \"$GROWL_NAME\" $GROWL_ICON -m \"$MSG$APPEND\" &
+    "
+    $DEBUG && echo "$COMMANDS"
+
+    echo "$COMMANDS" | at "$TIME"
 }
+
+if [ "x$1" = 'x-h' ]; then
+    usage
+    exit
+fi
 
 if [ $# -eq 0 ]; then
     # No arguments
@@ -39,11 +56,6 @@ if [ $# -eq 0 ]; then
         echo "$MSG" | growl_at "$TIME"
     done
 elif [ $# -eq 1 ]; then
-    if [ "$1" = '-h' ]; then
-        usage
-        exit
-    fi
-
     # One argument (time)
     cat | growl_at "$1"
 else
