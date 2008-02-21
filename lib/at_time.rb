@@ -1,8 +1,9 @@
 require 'time'
 
 # Parse at-compatible (but better) time specifications
-class AtTime < Time
+module AtTime
   class ParseError < RuntimeError; end
+
   # [[CC]YY]MMDDhhmm[.SS]
   def self.posix(str)
     str.strip!
