@@ -5,23 +5,22 @@ module AtTime
   class ParseError < RuntimeError; end
 
   # [[CC]YY]MMDDhhmm[.SS]
-  def self.posix(str)
+  def self.parse_posix(str)
     str.strip!
     unless str =~ /((\d\d)?\d\d)?(\d\d)(\d\d)(\d\d)(\d\d)(\.(\d\d))?/
       raise ArgumentError, "Invalid timespec"
     end
     t = Time.now
     if $1
-      year = $2
+      year = $1
     elsif $2
       year = "#{t.year/100}" + $2
     else
       year = t.year
     end
-    seconds = $7 or '00'
+    seconds = $8 or '00'
 
-    self.class.iso8601(sprintf("%s-%s-%sT%s:%s:%s", 
-                               year, $3, $4, $5, $6, seconds))
+    Time.mktime(year,$3,$4,$5,$6,seconds,0)
   end
 
   # timespec = time [date] | [now] + count units
@@ -84,12 +83,12 @@ module AtTime
   def self.parse_time(str)
     h = m = s = nil
     str.strip!
-    if str =~ /^(\d?\d):?(\d\d)(\.(\d\d?))?\s*(am?|pm?)?(.*)$/i
+    if str =~ /^(\d?\d)\:?(\d\d)(\.(\d+))?\s*(am?|pm?)?(.*)$/i
       h = $1.to_i
-      h += 12 if $5 =~ /^p/i and h <= 12
       m = $2.to_i
       s = $4.to_i or 0
-      str = $6
+      str = $6 or ""
+      h += 12 if $5 =~ /^p/i and h <= 12
     elsif 'midnight' =~ /^#{str}/i
       h,m,s = [0,0,0]
       str = str[8..-1]
@@ -98,7 +97,7 @@ module AtTime
       str = str[4..-1]
     elsif 'teatime' =~ /^#{str}/i
       h,m,s = [16,0,0]
-      str = str[8..-1]
+      str = str[7..-1]
     else
       raise ParseError, "Invalid time."
     end
@@ -113,15 +112,23 @@ module AtTime
     if str =~ /^(\d?\d)\.(\d?\d)\.((\d\d\d\d)|(\d?\d))$/
       d = $1.to_i
       m = $2.to_i
-      y = $4.to_i or 100*(Time.now.year/100) + $5.to_i
+      y = $3.to_i
+      y += 100*(Time.now.year/100) if $5
+    elsif str =~ /^((\d\d\d\d)|(\d\d))-(\d?\d)-(\d?\d)$/
+      d = $5.to_i
+      m = $4.to_i
+      y = $1.to_i
+      y += 100*(Time.now.year/100) if $3
     elsif str =~ /^(\d\d)\/(\d\d)\/((\d\d\d\d)|(\d?\d))$/
       m = $1.to_i
       d = $2.to_i
-      y = $4.to_i or 100*(Time.now.year/100) + $5.to_i
+      y = $3.to_i
+      y += 100*(Time.now.year/100) if $5
     elsif str =~ /^(\d\d)(\d\d)((\d\d\d\d)|(\d?\d))$/
       m = $1.to_i
       d = $2.to_i
-      y = $4.to_i or 100*(Time.now.year/100) + $5.to_i
+      y = $3.to_i
+      y += 100*(Time.now.year/100) if $5
     elsif 'today' =~ /^#{str}$/i
       t = Time.now
       m = t.month
@@ -132,14 +139,20 @@ module AtTime
       m = t.month
       d = t.day
       y = t.year
-    elsif str =~ /^([a-z]+)\s+(\d+)\s*((\d\d\d\d)|(\d?\d))$/i
+    elsif str =~ /^([a-z]+)\s+(\d+)\s*((\d\d\d\d)|(\d?\d))?$/i
       t = Time.now
       d = $2.to_i
-      m = months.index $1.downcase
-      raise ParseError, "Invalid month" unless m
+      y = $3
+      y4 = $4
+      y2 = $5
+      m = $1
+      ary = months.select{|x| x =~ /^#{m}/i}
+      raise ParseError, "Invalid month '#{m}'" if ary.empty?
+      raise ParseError, "Ambiguous month '#{m}' (#{ary.inspect})" if ary.size > 1
+      m = months.index ary[0]
       m += 1
-      if $3
-        y = $4.to_i or 100*(t.year/100) + $5.to_i
+      if y
+        y += 100*(t.year/100) if y2
       else
         y = (t.month < m ? t.year + 1 : t.year)
       end
@@ -170,3 +183,5 @@ end
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+# vim: nowrap
