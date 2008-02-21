@@ -1,0 +1,95 @@
+#! /opt/local/bin/ruby
+# Crème Rappel
+# Hans Fugal
+# GPL2
+
+## Customization
+SPEAK=false
+GROWL=true
+GROWLNOTIFY=`which growlnotify`.strip
+GROWL_ICON=%w(-a iCal.app)      # See growlnotify(1)
+GROWL_NAME='Crème Rappel'
+SHOW_TIME=false  # show the time specification in the growl notification
+#SAY_VOICE='Zarvox'
+##
+
+DEBUG=false
+
+require 'at_time'
+
+def usage
+  puts <<-EOF
+usage: #{$0} [time [message]]
+
+If message or both are not specified, they are expected on stdin. If neither is
+specified, multiple time message pairs are accepted on stdin.
+  EOF
+
+  exit 0
+end
+
+def growl(timespec, msg)
+  time = AtTime.parse_timespec(timespec)
+  puts "#{time}"
+  puts "Sleeping #{(time - Time.now).round} seconds" if DEBUG
+  fork do
+    while time - Time.now > 0
+      sleep 1
+    end
+
+    if SPEAK
+      fork do
+        ary = []
+        ary += %W(-v #{SAY_VOICE}) rescue nil
+        ary += [msg]
+        exec 'say', *ary
+      end
+    end
+
+    if GROWL
+      fork do
+        msg += " (#{time.iso8601})" if SHOW_TIME
+        # -w is needed due to a bug in growl or growlnotify on Leopard
+        ary = %W(-w -s -n #{GROWL_NAME})
+        ary += GROWL_ICON if GROWL_ICON
+        ary += %W(-m #{msg})
+        puts ary.inspect if DEBUG
+        exec GROWLNOTIFY, *ary
+      end
+    end
+  end
+end
+
+
+usage if ARGV[0] == '-h' or ARGV[0] == '--help'
+case ARGV.size
+when 0
+  # No arguments, accept jobs on stdin
+  STDIN.each_line do |l|
+    time, msg = l.split(" ",2)
+    growl(time, msg)
+  end
+when 1
+  # One argument (time), read text on stdin
+  growl(time, STDIN.read)
+else
+  # 2+ arguments
+  growl(ARGV[0], ARGV[1..-1].join(" "))
+end
+
+
+# Copyright (C) 2008  Hans Fugal
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.

@@ -10,15 +10,33 @@ Synopsis
 Requirements
 ------------
 
+    - Ruby (included in OS X Tiger and above)
     - Growl
     - growlnotify (distributed with Growl in the Extras folder)
-    - a working at queue
 
 To get at working on launchd systems, see [2]. For more blabbering about Crème
 Rappel, see [1].
 
 1. http://hans.fugal.net/blog/articles/2008/02/15/cr%C3%A8me-rappel
 2. http://hans.fugal.net/blog/articles/2008/02/13/atd-on-a-mac
+
+Installation
+------------
+
+    sudo ruby setup.rb
+
+You may need to symlink or adjust PATH if you're using Leopard's Ruby.
+
+Details
+-------
+
+    creme [timespec [message]]
+
+If message is omitted, it is expected on stdin. If both are omitted, then
+multiple notifications can be specified, one per line.
+
+Timespecs are compatible with at(1), but more friendly. For example, you can do 
+"+5m" instead of "+ 5 minutes".
 
 Author
 ------
