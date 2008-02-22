@@ -13,7 +13,7 @@ Requirements
 
     - Ruby (included in OS X Tiger and above)
     - Growl
-    - growlnotify (distributed with Growl in the Extras folder)
+    - growlnotify (distributed with Growl in the Extras folder. Run install.sh)
 
 Installation
 ------------
@@ -21,6 +21,9 @@ Installation
     sudo ruby setup.rb
 
 You may need to symlink or adjust PATH if you're using Leopard's Ruby.
+Something like this in your ~/.bashrc :
+
+    export PATH=$PATH:/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
 
 Details
 -------

@@ -1,4 +1,4 @@
-#! /opt/local/bin/ruby
+#! /usr/bin/ruby
 # Crème Rappel
 # Hans Fugal
 # GPL2
@@ -62,6 +62,11 @@ end
 
 
 usage if ARGV[0] == '-h' or ARGV[0] == '--help'
+if GROWLNOTIFY == ""
+  puts "I didn't find growlnotify. Make sure it is in your PATH."
+  exit 1
+end
+
 case ARGV.size
 when 0
   # No arguments, accept jobs on stdin
@@ -71,7 +76,7 @@ when 0
   end
 when 1
   # One argument (time), read text on stdin
-  growl(time, STDIN.read)
+  growl(ARGV[0], STDIN.read)
 else
   # 2+ arguments
   growl(ARGV[0], ARGV[1..-1].join(" "))
