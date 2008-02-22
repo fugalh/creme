@@ -11,3 +11,7 @@ end
 task 'install' do
   system 'ruby', 'setup.rb'
 end
+
+task 'dist' do
+  system 'hg','archive','-t','tbz2',"creme-#{`cat VERSION`.strip}.tar.bz2"
+end
