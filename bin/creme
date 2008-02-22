@@ -4,7 +4,7 @@
 # GPL2
 
 ## Customization
-SPEAK=false
+SPEAK=true
 GROWL=true
 GROWLNOTIFY=`which growlnotify`.strip
 GROWL_ICON=%w(-a iCal.app)      # See growlnotify(1)
