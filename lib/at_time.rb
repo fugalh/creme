@@ -91,13 +91,13 @@ module AtTime
       h += 12 if $5 =~ /^p/i and h <= 12
     elsif 'midnight' =~ /^#{str}/i
       h,m,s = [0,0,0]
-      str = str[8..-1]
+      str = str[$&.size..-1]
     elsif 'noon' =~ /^#{str}/i
       h,m,s = [12,0,0]
-      str = str[4..-1]
+      str = str[$&.size..-1]
     elsif 'teatime' =~ /^#{str}/i
       h,m,s = [16,0,0]
-      str = str[7..-1]
+      str = str[$&.size..-1]
     else
       raise ParseError, "Invalid time."
     end

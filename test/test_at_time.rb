@@ -24,6 +24,7 @@ class TestAtTime < Test::Unit::TestCase
     assert_equal [0,0,0,''], AtTime.parse_time('midnight')
     assert_equal [12,0,0,''], AtTime.parse_time('noon')
     assert_equal [16,0,0,''], AtTime.parse_time('teatime')
+    assert_equal [16,0,0,''], AtTime.parse_time('tea')
     assert_equal [16,10,0,''], AtTime.parse_time('1610')
     assert_equal [16,1,0,''], AtTime.parse_time('4:01 pm')
     assert_equal [10,3,10,''], AtTime.parse_time('10:03.10 am')
