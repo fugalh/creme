@@ -20,11 +20,6 @@ Installation
 
     sudo ruby setup.rb
 
-You may need to symlink or adjust PATH if you're using Leopard's Ruby.
-Something like this in your ~/.bashrc :
-
-    export PATH=$PATH:/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
-
 Details
 -------
 
@@ -35,6 +30,27 @@ multiple notifications can be specified, one per line.
 
 Timespecs are compatible with at(1), but more friendly. For example, you can do 
 "+5m" instead of "+ 5 minutes".
+
+Troubleshooting
+---------------
+
+If bash can't find creme after running setup.rb, you may need to symlink or
+adjust PATH if you're using Leopard's Ruby.  Something like this in your
+~/.bashrc :
+
+    export PATH=$PATH:/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
+
+If you get an annoying warning something like this
+
+    creme:9: warning: Insecure world writable dir /usr/local/mysql/bin in PATH, mode 040777
+
+then you can add -W0 to the shebang line (the first line of the script). So the
+new shebang line would look like
+
+    #! /usr/bin/ruby -W0
+
+But really, see if there's another safer way to work around the MySQL
+wonkiness, than a world-writable path entry.
 
 Author
 ------
