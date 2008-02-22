@@ -13,5 +13,5 @@ task 'install' do
 end
 
 task 'dist' do
-  system 'hg','archive','-t','tbz2',"creme-#{`cat VERSION`.strip}.tar.bz2"
+  system 'hg','archive','-t','tbz2',"web/creme-#{`cat VERSION`.strip}.tar.bz2"
 end

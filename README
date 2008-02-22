@@ -15,11 +15,8 @@ Requirements
     - Growl
     - growlnotify (distributed with Growl in the Extras folder)
 
-To get at working on launchd systems, see [2]. For more blabbering about Crème
-Rappel, see [1].
-
-1. http://hans.fugal.net/blog/articles/2008/02/15/cr%C3%A8me-rappel
-2. http://hans.fugal.net/blog/articles/2008/02/13/atd-on-a-mac
+For more blabbering about Crème Rappel, see
+http://hans.fugal.net/blog/articles/2008/02/15/cr%C3%A8me-rappel
 
 Installation
 ------------
