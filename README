@@ -18,6 +18,9 @@ Requirements
 Installation
 ------------
 
+Look at the top of bin/creme and make any configuration changes you like. Then,
+do
+
     sudo ruby setup.rb
 
 Details
