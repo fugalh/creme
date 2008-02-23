@@ -79,16 +79,19 @@ module AtTime
     end
   end
 
-  # time = [H]HMM[.SS] [am|pm] | [H]H:MM[.SS] [am|pm] | midnight | noon | teatime
+  # time = [H]H[MM[.SS]] [am|pm] | [H]H[:MM[.SS]] [am|pm] | midnight | noon | teatime
   def self.parse_time(str)
     h = m = s = nil
     str.strip!
-    if str =~ /^(\d?\d)\:?(\d\d)(\.(\d+))?\s*(am?|pm?)?(.*)$/i
+    if str =~ /^(\d?\d)(\:?(\d\d)(\.(\d+))?)?\s*(am?|pm?)?(.*)$/i
       h = $1.to_i
-      m = $2.to_i
-      s = $4.to_i or 0
-      str = $6 or ""
-      h += 12 if $5 =~ /^p/i and h <= 12
+      m = s = 0
+      if $2
+        m = $3.to_i
+        s = ($5 ? $5.to_i : 0)
+      end
+      str = $7 or ""
+      h += 12 if $6 =~ /^p/i and h <= 12
     elsif 'midnight' =~ /^#{str}/i
       h,m,s = [0,0,0]
       str = str[$&.size..-1]

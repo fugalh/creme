@@ -29,6 +29,7 @@ class TestAtTime < Test::Unit::TestCase
     assert_equal [16,1,0,''], AtTime.parse_time('4:01 pm')
     assert_equal [10,3,10,''], AtTime.parse_time('10:03.10 am')
     assert_equal [11,3,5,''], AtTime.parse_time('1103.5')
+    assert_equal [23,0,0,''], AtTime.parse_time('11pm')
   end
 
   # date = month-name day | DD.MM.YY[YY] | MM/DD/YY[YY] | MMDDYY[YY] | today | tomorrow
