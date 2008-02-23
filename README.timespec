@@ -6,7 +6,7 @@ timespec = time [date] | [now] + count units
 units    = seconds | minutes | hours | days | weeks | months | years
 time     = ( [H]H[MM[.SS]] | [H]H[:MM[.SS]] ) [am|pm] | 
            midnight | noon | teatime
-date     = month-name day | today | tomorrow |
+date     = month-name day [[YY]YY] | today | tomorrow | weekday-name
            [D]D.[M]M.[YY]YY | [M]M/[D]D/[YY]YY | 
            [YY]YY-[M]M-[D]D | [M]M[D]D[YY]YY
 

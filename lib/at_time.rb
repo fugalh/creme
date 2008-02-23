@@ -109,11 +109,11 @@ module AtTime
     return [h,m,s,str]
   end
 
-  # date = month-name day | DD.MM.YY[YY] | MM/DD/YY[YY] | MMDDYY[YY] | today | tomorrow
   def self.parse_date(str)
     y = m = d = nil
     str.strip!
     months = %w(january february march april may june july august september october november december)
+    weekdays = %w(monday tuesday wednesday thursday friday saturday sunday)
     if str =~ /^(\d?\d)\.(\d?\d)\.((\d\d\d\d)|(\d?\d))$/
       d = $1.to_i
       m = $2.to_i
@@ -161,6 +161,19 @@ module AtTime
       else
         y = (t.month < m ? t.year + 1 : t.year)
       end
+    elsif str =~ /^([a-z]+)$/i
+      wday = $1
+      ary = weekdays.select{|x| x =~ /^#{wday}/i}
+      raise ParseError, "Invalid weekday '#{wday}'" if ary.empty?
+      raise ParseError, "Ambiguous weekday '#{wday}'" if ary.size > 1
+      wday = weekdays.index(ary[0]) + 1
+      t = Time.now
+      days = (wday - t.wday) % 7
+      days = 7 if days == 0
+      t += days * 60*60*24
+      y = t.year
+      m = t.month
+      d = t.day
     elsif str =~ /^$/
       t = Time.now
       y = t.year

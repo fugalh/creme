@@ -30,9 +30,9 @@ end
 
 def growl(timespec, msg)
   time = AtTime.parse_timespec(timespec)
-  puts "#{time}"
   puts "Sleeping #{(time - Time.now).round} seconds" if DEBUG
   fork do
+    puts "#{time} (#{Process.pid})" # XXX is it bad to put this inside the fork?
     while time - Time.now > 0
       sleep 1
     end

@@ -39,6 +39,12 @@ class TestAtTime < Test::Unit::TestCase
     assert_equal [1977,12,15], AtTime.parse_date('12/15/1977')
     assert_equal [2077,12,15], AtTime.parse_date('12/15/77')
     assert_equal [2008,2,21], AtTime.parse_date('2008-2-21')
+    w = $now + 7*60*60*24
+    wday_name = %w(monday tuesday wednesday thursday friday saturday sunday)[$now.wday - 1]
+    assert_equal [w.year, w.month, w.day], AtTime.parse_date(wday_name)
+    w = $now + 2*60*60*24
+    wday_name = %w(monday tuesday wednesday thursday friday saturday sunday)[(($now.wday + 2)%7) - 1]
+    assert_equal [w.year, w.month, w.day], AtTime.parse_date(wday_name)
   end
 
   # timespec = time [date] | [now] + count units
