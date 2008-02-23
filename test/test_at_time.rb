@@ -47,6 +47,7 @@ class TestAtTime < Test::Unit::TestCase
     assert_datetime $now, AtTime.parse_timespec($now.strftime("%H%M.%S %d.%m.%Y"))
     assert_equal (Time.now + 5).sec, AtTime.parse_timespec('+5s').sec
     assert_equal (Time.now + 5*60).min, AtTime.parse_timespec('now + 5 min').min
+    assert_equal (Time.now + 5*60).min, AtTime.parse_timespec('+5').min
   end
 
   # POSIX = [[CC]YY]MMDDhhmm[.SS]

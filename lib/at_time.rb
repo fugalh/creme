@@ -26,14 +26,16 @@ module AtTime
   # timespec = time [date] | [now] + count units
   def self.parse_timespec(str)
     # [now] + count units
-    if str =~ /^\s*(now|(now)?\s*\+\s*(\d+)\s*([a-z]+))\s*$/i
+    if str =~ /^\s*(now|(now)?\s*\+\s*(\d+)\s*([a-z]+)?)\s*$/i
       return Time.now if $1 == 'now'
 
       count = $3.to_i
 
-      # units = seconds | minutes | hours | days | weeks | months | years
-      ary = %w(seconds minutes hours days weeks months years).select{|x| x =~ /^#{$4}/i }
-      raise ParseError, "Invalid unit" if ary.empty?
+      # units = seconds | minutes | hours | days | weeks | months | years | 
+      # default minutes
+      unit = ($4 or 'minutes')
+      ary = %w(seconds minutes hours days weeks months years).select{|x| x =~ /^#{unit}/i }
+      raise ParseError, "Invalid unit #{unit}" if ary.empty?
       unit = ary[0]
 
       now = Time.now
