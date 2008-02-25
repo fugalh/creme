@@ -40,10 +40,10 @@ class TestAtTime < Test::Unit::TestCase
     assert_equal [2077,12,15], AtTime.parse_date('12/15/77')
     assert_equal [2008,2,21], AtTime.parse_date('2008-2-21')
     w = $now + 7*60*60*24
-    wday_name = %w(monday tuesday wednesday thursday friday saturday sunday)[$now.wday - 1]
+    wday_name = %w(sunday monday tuesday wednesday thursday friday saturday)[$now.wday]
     assert_equal [w.year, w.month, w.day], AtTime.parse_date(wday_name)
     w = $now + 2*60*60*24
-    wday_name = %w(monday tuesday wednesday thursday friday saturday sunday)[(($now.wday + 2)%7) - 1]
+    wday_name = %w(sunday monday tuesday wednesday thursday friday saturday)[($now.wday + 2)%7]
     assert_equal [w.year, w.month, w.day], AtTime.parse_date(wday_name)
   end
 
@@ -54,6 +54,7 @@ class TestAtTime < Test::Unit::TestCase
     assert_equal (Time.now + 5).sec, AtTime.parse_timespec('+5s').sec
     assert_equal (Time.now + 5*60).min, AtTime.parse_timespec('now + 5 min').min
     assert_equal (Time.now + 5*60).min, AtTime.parse_timespec('+5').min
+    assert_equal 3, AtTime.parse_timespec('255pm wed').wday
   end
 
   # POSIX = [[CC]YY]MMDDhhmm[.SS]

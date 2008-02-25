@@ -55,12 +55,10 @@ module AtTime
         ary[4] += count
         ary[5] += ary[4]/12
         ary[4] %= 12
-        puts ary.inspect
         Time.local(*ary)
       when 'years'
         ary = now.to_a
         ary[5] += count
-        puts ary.inspect
         Time.local(*ary)
       end
     else
@@ -85,14 +83,14 @@ module AtTime
   def self.parse_time(str)
     h = m = s = nil
     str.strip!
-    if str =~ /^(\d?\d)(\:?(\d\d)(\.(\d+))?)?\s*(am?|pm?)?(.*)$/i
+    if str =~ /^(\d?\d)(\:?(\d\d)(\.(\d+))?)?\s*(am?|pm?)?(\s|$)(.*)/i
       h = $1.to_i
       m = s = 0
       if $2
         m = $3.to_i
         s = ($5 ? $5.to_i : 0)
       end
-      str = $7 or ""
+      str = $8 or ""
       h += 12 if $6 =~ /^p/i and h <= 12
     elsif 'midnight' =~ /^#{str}/i
       h,m,s = [0,0,0]
@@ -113,7 +111,7 @@ module AtTime
     y = m = d = nil
     str.strip!
     months = %w(january february march april may june july august september october november december)
-    weekdays = %w(monday tuesday wednesday thursday friday saturday sunday)
+    weekdays = %w(sunday monday tuesday wednesday thursday friday saturday)
     if str =~ /^(\d?\d)\.(\d?\d)\.((\d\d\d\d)|(\d?\d))$/
       d = $1.to_i
       m = $2.to_i
@@ -166,7 +164,7 @@ module AtTime
       ary = weekdays.select{|x| x =~ /^#{wday}/i}
       raise ParseError, "Invalid weekday '#{wday}'" if ary.empty?
       raise ParseError, "Ambiguous weekday '#{wday}'" if ary.size > 1
-      wday = weekdays.index(ary[0]) + 1
+      wday = weekdays.index(ary[0])
       t = Time.now
       days = (wday - t.wday) % 7
       days = 7 if days == 0
@@ -180,7 +178,7 @@ module AtTime
       m = t.month
       d = t.day
     else
-      raise ParseError, 'Invalid date'
+      raise ParseError, "Invalid date '#{str}'"
     end
     return [y,m,d]
   end
