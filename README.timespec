@@ -2,7 +2,7 @@ Here's the pseudo-BNF for timespecs. If you think a shortcut is missing, let me
 know!
 
 
-timespec = time [date] | [now] + count units
+timespec = time [zulu] [date] | [now] + count units
 units    = seconds | minutes | hours | days | weeks | months | years
 time     = ( [H]H[MM[.SS]] | [H]H[:MM[.SS]] ) [am|pm] | 
            midnight | noon | teatime

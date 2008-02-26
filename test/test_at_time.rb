@@ -1,8 +1,8 @@
 require 'test/unit'
 require 'at_time'
 
+# See README.timespec
 class TestAtTime < Test::Unit::TestCase
-  # hms is [hours, minutes, seconds]
   def assert_time(t1, t2)
     assert_equal t1.hour, t2.hour
     assert_equal t1.min, t2.min
@@ -19,7 +19,6 @@ class TestAtTime < Test::Unit::TestCase
     $now = Time.now
   end
 
-  # time = [H]HMM[.SS] [am|pm] | [H]H:MM[.SS] [am|pm] | midnight | noon | teatime
   def test_parse_time
     assert_equal [0,0,0,''], AtTime.parse_time('midnight')
     assert_equal [12,0,0,''], AtTime.parse_time('noon')
@@ -32,7 +31,6 @@ class TestAtTime < Test::Unit::TestCase
     assert_equal [23,0,0,''], AtTime.parse_time('11pm')
   end
 
-  # date = month-name day | DD.MM.YY[YY] | MM/DD/YY[YY] | MMDDYY[YY] | today | tomorrow
   def test_parse_date
     assert_equal [$now.year,2,21], AtTime.parse_date('February 21')
     assert_equal [$now.year,2,21], AtTime.parse_date('feb 21')
@@ -47,7 +45,6 @@ class TestAtTime < Test::Unit::TestCase
     assert_equal [w.year, w.month, w.day], AtTime.parse_date(wday_name)
   end
 
-  # timespec = time [date] | [now] + count units
   def test_parse_timespec
     assert_time $now, AtTime.parse_timespec($now.strftime("%H%M.%S"))
     assert_datetime $now, AtTime.parse_timespec($now.strftime("%H%M.%S %d.%m.%Y"))
@@ -55,6 +52,9 @@ class TestAtTime < Test::Unit::TestCase
     assert_equal (Time.now + 5*60).min, AtTime.parse_timespec('now + 5 min').min
     assert_equal (Time.now + 5*60).min, AtTime.parse_timespec('+5').min
     assert_equal 3, AtTime.parse_timespec('255pm wed').wday
+    offset = Time.zone_offset($now.zone)
+    u = $now - offset
+    assert_equal $now.hour, AtTime.parse_timespec(u.strftime("%H%Mz")).hour
   end
 
   # POSIX = [[CC]YY]MMDDhhmm[.SS]

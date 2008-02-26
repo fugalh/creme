@@ -20,7 +20,7 @@ module AtTime
     end
     seconds = $8 or '00'
 
-    Time.mktime(year,$3,$4,$5,$6,seconds,0)
+    Time.mktime(year,$3,$4,$5,$6,seconds)
   end
 
   # timespec = time [date] | [now] + count units
@@ -62,20 +62,26 @@ module AtTime
         Time.local(*ary)
       end
     else
-      # time [date]
+      # time [zulu] [date]
       h,mi,s,str = parse_time(str)
       now = Time.now
+      z = false
+      if str.strip =~ /^(z(u(l(u)?)?)?)(.*)/
+        z = true
+        str = $5.strip
+      end
       if str.strip == ""
         y,mo,d = [now.year, now.month, now.day]
-        t = Time.mktime(y,mo,d,h,mi,s,0)
-        if t - Time.now < 0
+        t = Time.mktime(y,mo,d,h,mi,s)
+        while t - Time.now < 0
           t += 60*60*24
         end
-        t
       else
         y,mo,d = parse_date(str)
-        t = Time.mktime(y,mo,d,h,mi,s,0)
+        t = Time.mktime(y,mo,d,h,mi,s)
       end
+      t += t.utc_offset if z
+      t
     end
   end
 
@@ -83,14 +89,14 @@ module AtTime
   def self.parse_time(str)
     h = m = s = nil
     str.strip!
-    if str =~ /^(\d?\d)(\:?(\d\d)(\.(\d+))?)?\s*(am?|pm?)?(\s|$)(.*)/i
+    if str =~ /^(\d?\d)(\:?(\d\d)(\.(\d+))?)?\s*(am?|pm?)?(([\sz]|$).*)/i
       h = $1.to_i
       m = s = 0
       if $2
         m = $3.to_i
         s = ($5 ? $5.to_i : 0)
       end
-      str = $8 or ""
+      str = $7 or ""
       h += 12 if $6 =~ /^p/i and h <= 12
     elsif 'midnight' =~ /^#{str}/i
       h,m,s = [0,0,0]
@@ -102,7 +108,7 @@ module AtTime
       h,m,s = [16,0,0]
       str = str[$&.size..-1]
     else
-      raise ParseError, "Invalid time."
+      raise ParseError, "Invalid time '#{str}'."
     end
     return [h,m,s,str]
   end
