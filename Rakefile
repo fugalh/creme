@@ -14,4 +14,5 @@ end
 
 task 'dist' do
   system 'hg','archive','-t','tbz2',"web/creme-#{`cat VERSION`.strip}.tar.bz2"
+  system 'gem build gemspec; mv *.gem web/'
 end
