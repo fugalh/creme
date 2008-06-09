@@ -1,4 +1,4 @@
-#! /usr/bin/ruby
+#! /opt/local/bin/ruby
 # Crème Rappel
 # Hans Fugal
 # GPL2
@@ -49,8 +49,7 @@ def growl(timespec, msg)
     if GROWL
       fork do
         msg += " (#{time.iso8601})" if SHOW_TIME
-        # -w is needed due to a bug in growl or growlnotify on Leopard
-        ary = %W(-w -s -n #{GROWL_NAME})
+        ary = %W(-s -n #{GROWL_NAME})
         ary += GROWL_ICON if GROWL_ICON
         ary += %W(-m #{msg})
         puts ary.inspect if DEBUG
