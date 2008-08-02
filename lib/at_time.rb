@@ -98,13 +98,13 @@ module AtTime
       end
       str = $7 or ""
       h += 12 if $6 =~ /^p/i and h <= 12
-    elsif 'midnight' =~ /^#{str}/i
+    elsif 'midnight' =~ /^#{str.split[0]}/i
       h,m,s = [0,0,0]
       str = str[$&.size..-1]
-    elsif 'noon' =~ /^#{str}/i
+    elsif 'noon' =~ /^#{str.split[0]}/i
       h,m,s = [12,0,0]
       str = str[$&.size..-1]
-    elsif 'teatime' =~ /^#{str}/i
+    elsif 'teatime' =~ /^#{str.split[0]}/i
       h,m,s = [16,0,0]
       str = str[$&.size..-1]
     else
