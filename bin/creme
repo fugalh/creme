@@ -31,8 +31,7 @@ end
 def growl(timespec, msg)
   time = AtTime.parse_timespec(timespec)
   puts "Sleeping #{(time - Time.now).round} seconds" if DEBUG
-  puts "#{time} (#{Process.pid})"
-  fork do
+  pid = fork do
     while time - Time.now > 0
       sleep 1
     end
@@ -42,6 +41,8 @@ def growl(timespec, msg)
         ary = []
         ary += %W(-v #{SAY_VOICE}) rescue nil
         ary += [msg]
+        $stderr.close
+        $stdout.close
         exec 'say', *ary
       end
     end
@@ -57,6 +58,8 @@ def growl(timespec, msg)
       end
     end
   end
+  puts "#{time} (#{pid})"
+  Process.detach(pid)
 end
 
 
