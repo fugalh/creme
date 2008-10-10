@@ -1,4 +1,7 @@
 InstalledFiles
 .config
 .*.tar.bz2
+.*.app
+bin/growlnotify
+\.DS
 web

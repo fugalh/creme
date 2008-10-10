@@ -1,4 +1,5 @@
-#! /opt/local/bin/ruby
+#! /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
+require 'rbconfig'
 # Crème Rappel
 # Hans Fugal
 # GPL2
@@ -7,7 +8,20 @@
 SPEAK=true
 GROWL=true
 GROWLNOTIFY=`which growlnotify`.strip
-GROWL_ICON=%w(-a iCal.app)      # See growlnotify(1)
+# Set the icon to use See growlnotify(1)
+if File.exist?('applet.icns')
+  # If we're running in the application bundle...
+  GROWL_ICON=%w(-I ../..)
+else
+  fn = File.join(Config::CONFIG['datadir'], 'creme', 'Crystal_Clear_app_bell.png')
+  if File.exist?(fn)
+    # expect it in datadir
+    GROWL_ICON=['--image', fn]
+  else
+    # borrow iCal's icon
+    GROWL_ICON=%w(-a iCal.app)
+  end
+end
 GROWL_NAME='Crème Rappel'
 SHOW_TIME=false  # show the time specification in the growl notification
 #SAY_VOICE='Zarvox'
@@ -32,6 +46,10 @@ def growl(timespec, msg)
   time = AtTime.parse_timespec(timespec)
   puts "Sleeping #{(time - Time.now).round} seconds" if DEBUG
   pid = fork do
+    # close stdout/stderr for the benefit of the applescript subshell
+    $stderr.close
+    $stdout.close
+
     while time - Time.now > 0
       sleep 1
     end
@@ -41,8 +59,6 @@ def growl(timespec, msg)
         ary = []
         ary += %W(-v #{SAY_VOICE}) rescue nil
         ary += [msg]
-        $stderr.close
-        $stdout.close
         exec 'say', *ary
       end
     end
