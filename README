@@ -34,6 +34,17 @@ multiple notifications can be specified, one per line.
 Timespecs are compatible with at(1), but more friendly. For example, you can do 
 "+5m" instead of "+ 5 minutes".
 
+Application Bundle
+------------------
+
+Crème Rappel now has a self-contained application bundle, so you can put it in
+the dock or launch it with quicksilver. It requires only Growl. When you give
+it a command it will display the timestamp and pid in a growl message.
+
+If you put a command in ~/.creme/default it will be the default. This is useful
+if you frequently need to issue the same command (e.g. whenever my wife tells
+me she's coming to pick me up, I do "+7 erin" so I can meet her outside).
+
 Troubleshooting
 ---------------
 
