@@ -66,6 +66,10 @@ new shebang line would look like
 But really, see if there's another safer way to work around the MySQL
 wonkiness, than a world-writable path entry.
 
+Development
+-----------
+http://github.com/fugalh/creme
+
 Author
 ------
 Hans Fugal <hans@fugal.net>
