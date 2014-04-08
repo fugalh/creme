@@ -13,8 +13,7 @@ module AtTime
     t = Time.now
     if $1
       year = $1
-    elsif $2
-      year = "#{t.year/100}" + $2
+      year = "#{t.year/100}" + year if year.size <= 2
     else
       year = t.year
     end

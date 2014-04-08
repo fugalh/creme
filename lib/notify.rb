@@ -55,13 +55,53 @@ class GrowlNotifier
       if @growl
         fork do
           msg += " (#{time.iso8601})" if show_time
-          ary = %W(-s -n #{GROWL_NAME})
+          ary = %W(-s -n #{@name})
           ary += @icon if @icon
           ary += %W(-m #{msg})
           puts ary.inspect if DEBUG
           exec @growlnotify, *ary
         end
       end
+    end
+    puts "#{time} (#{pid})"
+    Process.detach(pid)
+  end
+end
+
+# The notification center in e.g. Mavericks
+class OSXNotifier
+  def initialize(name='Crème Rappel')
+    @name = name
+  end
+
+  def speak(msg)
+    fork do
+      exec 'say', msg
+    end
+  end
+
+  def display_notification(msg)
+    #puts ary.inspect if DEBUG
+    IO.popen('osascript', 'w') do |io|
+      io.puts "display notification \"#{msg}\" with title \"#{@name}\""
+    end
+  end
+
+  def growl(timespec, msg, show_time)
+    time = AtTime.parse_timespec(timespec)
+    puts "Sleeping #{(time - Time.now).round} seconds" if DEBUG
+    pid = fork do
+      # close stdout/stderr for the benefit of the applescript subshell
+      $stderr.close
+      $stdout.close
+
+      while time - Time.now > 0
+        sleep 1
+      end
+
+      speak(msg)
+      msg += " (#{time.iso8601})" if show_time
+      display_notification(msg)
     end
     puts "#{time} (#{pid})"
     Process.detach(pid)
